@@ -1,4 +1,4 @@
-/* 
+/*
 ** Copyright 2012, Joel Pedraza
 **
 ** Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,11 +23,13 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.preference.CheckBoxPreference;
+import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceScreen;
 import android.preference.RingtonePreference;
 import android.preference.TwoStatePreference;
+import android.text.InputType;
 import android.text.TextUtils;
 
 public final class UnifiedPreferenceUtils {
@@ -79,12 +81,19 @@ public final class UnifiedPreferenceUtils {
 					} else {
 						// Set the summary to reflect the new ringtone display
 						// name.
-						String name = ringtone
-								.getTitle(preference.getContext());
+						String name = ringtone.getTitle(preference.getContext());
 						preference.setSummary(name);
 					}
 				}
 
+			} else if (preference instanceof EditTextPreference) {
+				EditTextPreference textPreference = (EditTextPreference) preference;
+				int inputType = textPreference.getEditText().getInputType();
+				if (inputType == (InputType.TYPE_CLASS_TEXT  | InputType.TYPE_TEXT_VARIATION_PASSWORD)) {
+					preference.setSummary(stringValue.replaceAll(".", "*"));
+				} else {
+					preference.setSummary(stringValue);
+				}
 			} else {
 				// For all other preferences, set the summary to the value's
 				// simple string representation.
